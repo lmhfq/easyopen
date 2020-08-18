@@ -11,6 +11,8 @@
         "doctrine/annotations": "^1.10",
         "hyperf/http-server": "^2.0"
     },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "easyopen\\": "src"
