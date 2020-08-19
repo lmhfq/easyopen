@@ -10,12 +10,21 @@ declare(strict_types=1);
 namespace lmh\easyopen\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
+use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
  * @Annotation
  * @Target({"CLASS"})
  */
-final class OpenService
+final class OpenService extends AbstractAnnotation
 {
+    /**
+     * @var null|string
+     */
+    public $prefix = '';
 
+    /**
+     * @var string
+     */
+    public $server = 'http';
 }
