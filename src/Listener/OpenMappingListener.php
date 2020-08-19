@@ -10,8 +10,6 @@ declare(strict_types=1);
 namespace lmh\easyopen\Listener;
 
 use Hyperf\Contract\ContainerInterface;
-use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Database\Model\Register;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
