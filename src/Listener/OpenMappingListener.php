@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace lmh\easyopen\Listener;
 
-use app\Collector\OpenMappingCollector;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;

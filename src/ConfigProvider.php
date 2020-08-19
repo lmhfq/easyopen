@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 
 namespace lmh\easyopen;
-
 use lmh\easyopen\Listener\OpenMappingListener;
+
 
 class ConfigProvider
 {
