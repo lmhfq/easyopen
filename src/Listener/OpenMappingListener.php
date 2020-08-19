@@ -16,6 +16,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use lmh\easyopen\Annotation\OpenMapping;
 use lmh\easyopen\Annotation\OpenService;
+use lmh\easyopen\Collector\OpenMappingCollector;
 
 /**
  * @Listener
