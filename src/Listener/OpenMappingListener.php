@@ -14,6 +14,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
+use Hyperf\Utils\Str;
 use lmh\easyopen\Annotation\OpenMapping;
 use lmh\easyopen\Annotation\OpenService;
 use lmh\easyopen\Collector\OpenMappingCollector;
@@ -45,15 +46,12 @@ class OpenMappingListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        // TODO: Implement process() method.
         /**
          * @var OpenMappingCollector $collector
+         * @var OpenMapping $annotation
          */
         $collector = $this->container->get(OpenMappingCollector::class);
         $annotationMethods = AnnotationCollector::getMethodsByAnnotation(OpenMapping::class);
-        /**
-         * @var OpenMapping $annotation
-         */
         foreach ($annotationMethods as $annotationMethod) {
             $class = $annotationMethod['class'];
             $method = $annotationMethod['method'];
@@ -61,8 +59,17 @@ class OpenMappingListener implements ListenerInterface
             if ($classAnnotation == null) {
                 continue;
             }
+            $prefix = $classAnnotation->prefix;
+            if ($prefix) {
+                if (Str::contains($prefix, '/')) {
+                    $prefix = str_replace('/', '.', $prefix);
+                    $prefix = rtrim($prefix, '.');
+                }
+                $prefix .= ".";
+            }
             $annotation = $annotationMethod['annotation'];
-            $collector->addMapping($annotation->methods, $annotation->path, [$class, $method]);
+            $path = $prefix . $annotation->path;
+            $collector->addMapping($annotation->methods, $path, [$class, $method]);
         }
     }
 }

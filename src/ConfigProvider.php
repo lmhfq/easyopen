@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 
 namespace lmh\easyopen;
+
+use lmh\easyopen\Collector\OpenMappingCollector;
 use lmh\easyopen\Listener\OpenMappingListener;
 
 
@@ -25,6 +27,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 OpenMappingListener::class,
+                OpenMappingCollector::class
             ],
             'annotations' => [
                 'scan' => [
