@@ -27,7 +27,6 @@ class ConfigProvider
             ],
             'listeners' => [
                 OpenMappingListener::class,
-                OpenMappingCollector::class
             ],
             'annotations' => [
                 'scan' => [
