@@ -19,9 +19,6 @@ use lmh\easyopen\Annotation\OpenMapping;
 use lmh\easyopen\Annotation\OpenService;
 use lmh\easyopen\Collector\OpenMappingCollector;
 
-/**
- * @Listener
- */
 class OpenMappingListener implements ListenerInterface
 {
     /**
