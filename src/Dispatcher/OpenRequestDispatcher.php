@@ -8,16 +8,16 @@ declare(strict_types=1);
  * Time: 上午10:26
  */
 
-namespace lmh\easyopen\Listener;
+namespace lmh\easyopen\Dispatcher;
 
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Dispatcher\AbstractDispatcher;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Http\Message\ResponseInterface;
 use lmh\easyopen\Collector\OpenMappingCollector;
-use Psr\Http\Message\ServerRequestInterface;
 
 class OpenRequestDispatcher extends AbstractDispatcher
 {
@@ -34,33 +34,44 @@ class OpenRequestDispatcher extends AbstractDispatcher
     public function dispatch(...$params)
     {
         [$request,] = $params;
-        $request = Context::set(ServerRequestInterface::class, $request);
         $contents = $request->getBody()->getContents();
-        //参数校验
-        //签名校验
+        //参数校验 TODO
+        //签名校验 TODO
         $contents = json_decode($contents, true);
+
         /**
          * @var OpenMappingCollector $collector
          */
         $collector = $this->container->get(OpenMappingCollector::class);
         $mapping = $collector->getStaticMapping();
-        if (!in_array($params['method'], $mapping)) {
+        if (!isset($mapping[$contents['method']])) {
 
         }
-        $callback = $mapping[$params['method']];
+        $callback = $mapping[$contents['method']];
+
         try {
             $reflect = new \ReflectionClass($callback[0]);
         } catch (\Exception  $e) {
+
+            //TODO
         }
         /**
          * @var array|Arrayable|mixed|ResponseInterface $response
          */
         $reflectionMethod = $reflect->getMethod($callback[1]);
         if ($reflectionMethod->isStatic()) {
-            $response = call_user_func($callback, $params['content']);
+            $response = call_user_func($callback, $contents['content']);
         } else {
-            $response = $reflectionMethod->invoke($reflect->newInstance(), $params['content']);
+            $response = $reflectionMethod->invoke($reflect->newInstance(), $contents['content']);
+        }
+        /**
+         * @var ResponseInterface $responseInterface
+         */
+        $responseInterface = Context::get(ResponseInterface::class);
+        if (is_string($response)) {
+            $response = $responseInterface->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
         }
         return $response->withAddedHeader('Server', 'Hyperf');
     }
+
 }
