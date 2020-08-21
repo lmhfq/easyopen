@@ -99,6 +99,7 @@ class OpenResponse
     }
 
     /**
+     * @param ResponseInterface|null $response
      * @return mixed
      */
     protected static function getResponse(?ResponseInterface $response = null)
