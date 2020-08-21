@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Lmh\EasyOpen;
 
-use Lmh\EasyOpen\Listener\OpenMappingListener;
-
 
 class ConfigProvider
 {
@@ -32,8 +30,13 @@ class ConfigProvider
             'commands' => [
             ],
             'listeners' => [
-                OpenMappingListener::class,
-            ]
+                \Lmh\EasyOpen\Listener\OpenMappingListener::class,
+            ],
+            'handler' => [
+                'http' => [
+                    \Lmh\EasyOpen\Handler\ErrorCodeExceptionHandler::class
+                ],
+            ],
         ];
     }
 }

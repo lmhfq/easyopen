@@ -17,8 +17,11 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
-use Hyperf\Validation\ValidatorFactory;
 use Lmh\EasyOpen\Constant\RequestParamsConstant;
+use Lmh\EasyOpen\Exception\ErrorCodeException;
+use Lmh\EasyOpen\Message\ErrorCode;
+use Lmh\EasyOpen\Message\ErrorCodeFactory;
+use Lmh\EasyOpen\Message\ErrorSubCode;
 use Lmh\EasyOpen\OpenRequestParams;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -44,9 +47,9 @@ class OpenRequestDispatcher extends AbstractDispatcher
          */
         $contents = $request->getBody()->getContents();
         $contents = json_decode($contents, true);
-        
+
         //参数校验 TODO
-        //$this->validate($contents);
+        $this->validate($contents);
         //签名校验 TODO
         $requestParams = new OpenRequestParams();
         $requestParams->method = $contents['method'];
@@ -91,28 +94,32 @@ class OpenRequestDispatcher extends AbstractDispatcher
      */
     protected function validate(array $input)
     {
+
         /**
-         * @var ValidatorFactory $factory
+         * @var ValidatorFactoryInterface $factory
          */
         try {
             $factory = $this->container->get(ValidatorFactoryInterface::class);
-        }catch (\Exception $exception){
-
+        } catch (\Throwable $exception) {
+            throw new ErrorCodeException(ErrorCode::SYSTEM_ERROR, ErrorSubCode::UNKNOW_ERROR);
         }
-
-      
         $rules = [
             RequestParamsConstant::APP_ID_NAME => 'required|max:20',
             RequestParamsConstant::BIZ_CONTENT_NAME => 'required',
         ];
         $messages = [
-//            RequestParamsConstant::APP_ID_NAME . '.required' => 'A title is required',
-//            RequestParamsConstant::BIZ_CONTENT_NAME . '.required' => 'A message is required',
+            RequestParamsConstant::APP_ID_NAME . '.required' => ErrorSubCode::MISSING_APP_ID,
+            RequestParamsConstant::BIZ_CONTENT_NAME . '.required' => ErrorSubCode::MISSING_BIZ_CONTENT,
         ];
-        $validator = $factory->make($input, $rules);
-        if (!$validator->passes()) {
-            $validator->errors();
-            var_dump(1);exit;
+
+        $validator = $factory->make($input, $rules, $messages);
+        if ($validator->fails()) {
+            //new \Hyperf\Utils\MessageBag();
+            $messages = $validator->errors()->getMessages();
+            foreach ($messages as $message) {
+                throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, $message[0]);
+            }
+            // throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, $messages[]);
         }
     }
 

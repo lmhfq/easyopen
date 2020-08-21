@@ -81,3 +81,5 @@ class MerchantService
 
 
 ##待完善点
+
+ * 签名验证
