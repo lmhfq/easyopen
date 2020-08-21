@@ -46,7 +46,7 @@ class OpenRequestDispatcher extends AbstractDispatcher
         $contents = json_decode($contents, true);
         
         //参数校验 TODO
-        $this->validate($contents);
+        //$this->validate($contents);
         //签名校验 TODO
         $requestParams = new OpenRequestParams();
         $requestParams->method = $contents['method'];
@@ -97,9 +97,9 @@ class OpenRequestDispatcher extends AbstractDispatcher
         try {
             $factory = $this->container->get(ValidatorFactoryInterface::class);
         }catch (\Exception $exception){
-            var_dump($exception);exit;
+
         }
-        var_dump($factory);exit;
+
       
         $rules = [
             RequestParamsConstant::APP_ID_NAME => 'required|max:20',
