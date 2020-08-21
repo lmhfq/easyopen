@@ -20,6 +20,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Lmh\EasyOpen\Constant\RequestParamsConstant;
 use Lmh\EasyOpen\Exception\ErrorCodeException;
 use Lmh\EasyOpen\Http\OpenRequestParams;
+use Lmh\EasyOpen\Http\OpenResponse;
+use Lmh\EasyOpen\Http\OpenResponseResultFactory;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
 use Psr\Http\Message\RequestInterface;
@@ -58,10 +60,10 @@ class OpenRequestDispatcher extends AbstractDispatcher
          */
         $collector = $this->container->get(OpenMappingCollector::class);
         $mapping = $collector->getStaticMapping();
-        if (!isset($mapping[$contents['method']])) {
+        if (!isset($mapping[$contents[RequestParamsConstant::METHOD_NAME]])) {
 
         }
-        $callback = $mapping[$contents['method']];
+        $callback = $mapping[$contents[RequestParamsConstant::METHOD_NAME]];
 
         try {
             $reflect = new \ReflectionClass($callback[0]);
@@ -73,19 +75,13 @@ class OpenRequestDispatcher extends AbstractDispatcher
          * @var array|Arrayable|mixed|ResponseInterface $response
          */
         $reflectionMethod = $reflect->getMethod($callback[1]);
+        $parameter = $contents[RequestParamsConstant::BIZ_CONTENT_NAME];
         if ($reflectionMethod->isStatic()) {
-            $response = call_user_func($callback, $contents['content']);
+            $response = call_user_func($callback, $parameter);
         } else {
-            $response = $reflectionMethod->invoke($reflect->newInstance(), $contents['content']);
+            $response = $reflectionMethod->invoke($reflect->newInstance(), $parameter);
         }
-        /**
-         * @var ResponseInterface $responseInterface
-         */
-        $responseInterface = Context::get(ResponseInterface::class);
-        if (is_string($response)) {
-            $response = $responseInterface->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
-        }
-        return $response->withAddedHeader('Server', 'Hyperf');
+        return OpenResponseResultFactory::success($response);
     }
 
     /**

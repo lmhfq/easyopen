@@ -22,13 +22,13 @@ class OpenResponseResultFactory
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public static function success(ResponseInterface $response): ResponseInterface
+    public static function success(array $data, ?ResponseInterface $response = null): ResponseInterface
     {
         $openResponseResult = new OpenResponseResult();
         $openResponseResult->setCode(ErrorCode::SUCCESS);
         $openResponseResult->setMsg(ErrorCode::getMessage(ErrorCode::SUCCESS));
-        $openResponseResult->setResponse([]);
-        return OpenResponse::xml($response, $openResponseResult->toArray());
+        $openResponseResult->setResponse($data);
+        return OpenResponse::json($openResponseResult->toArray(), $response);
     }
 
 
@@ -39,13 +39,13 @@ class OpenResponseResultFactory
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public static function error(int $errorCode, string $subErrorCode, ResponseInterface $response): ResponseInterface
+    public static function error(int $errorCode, string $subErrorCode, ?ResponseInterface $response = null): ResponseInterface
     {
         $openResponseResult = new OpenResponseResult();
         $openResponseResult->setCode($errorCode);
         $openResponseResult->setMsg(ErrorCode::getMessage($errorCode));
         $openResponseResult->setSubCode($subErrorCode);
         $openResponseResult->setSubMsg(ErrorSubCode::getMessage($subErrorCode));
-        return OpenResponse::xml($response, $openResponseResult->toArray());
+        return OpenResponse::json($openResponseResult->toArray(), $response);
     }
 }

@@ -76,7 +76,7 @@ class OpenResponseResult implements Arrayable, Jsonable
     /**
      * @return string
      */
-    public function getSubCode(): string
+    public function getSubCode(): ?string
     {
         return $this->sub_code;
     }
@@ -92,7 +92,7 @@ class OpenResponseResult implements Arrayable, Jsonable
     /**
      * @return string
      */
-    public function getSubMsg(): string
+    public function getSubMsg(): ?string
     {
         return $this->sub_msg;
     }
@@ -129,10 +129,13 @@ class OpenResponseResult implements Arrayable, Jsonable
         $data = [
             'code' => $this->getCode(),
             'msg' => $this->getMsg(),
-            'sub_error_code' => $this->getSubCode(),
-            'sub_msg' => $this->getSubMsg(),
-
         ];
+        if ($this->getSubCode()) {
+            $data['sub_error_code'] = $this->getSubCode();
+        }
+        if ($this->getSubMsg()) {
+            $data['sub_msg'] = $this->getSubMsg();
+        }
         if ($this->getResponse()) {
             $data['response'] = $this->getResponse();
         }
