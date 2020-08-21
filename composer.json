@@ -9,7 +9,7 @@
     "description": "",
     "autoload": {
         "psr-4": {
-            "lmh\\easyopen\\": "src/"
+            "Lmh\\EasyOpen\\": "src/"
         }
     },
     "autoload-dev": {
@@ -23,7 +23,8 @@
         "hyperf/di": "2.0.*",
         "hyperf/framework": "2.0.*",
         "hyperf/utils": "~2.0.0",
-        "netresearch/jsonmapper": "^3.1"
+        "hyperf/validation": "^2.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
@@ -41,7 +42,7 @@
     },
     "extra": {
         "hyperf": {
-            "config": "lmh\\easyopen\\ConfigProvider"
+            "config": "Lmh\\EasyOpen\\ConfigProvider"
         }
     }
 }

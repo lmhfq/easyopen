@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 下午7:10
  */
 
-namespace lmh\easyopen\Collector;
+namespace Lmh\EasyOpen\Collector;
 
 
 class OpenMappingCollector

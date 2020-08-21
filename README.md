@@ -14,7 +14,7 @@ namespace app\Controller;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use lmh\easyopen\Dispatcher\OpenRequestDispatcher;
+use Lmh\EasyOpen\Dispatcher\OpenRequestDispatcher;
 
 /**
  * @Controller
@@ -39,8 +39,8 @@ class GateWayController
 namespace app\Service\merchant;
 
 
-use lmh\easyopen\Annotation\OpenService;
-use lmh\easyopen\Annotation\OpenMapping;
+use Lmh\EasyOpen\Annotation\OpenService;
+use Lmh\EasyOpen\Annotation\OpenMapping;
 /**
  * @OpenService()
  */

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 下午4:20
  */
 
-namespace lmh\easyopen\Annotation;
+namespace Lmh\EasyOpen\Annotation;
 
 
 use Hyperf\HttpServer\Annotation\Mapping;

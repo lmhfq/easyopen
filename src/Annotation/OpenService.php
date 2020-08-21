@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 下午3:08
  */
 
-namespace lmh\easyopen\Annotation;
+namespace Lmh\EasyOpen\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;

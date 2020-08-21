@@ -10,10 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace lmh\easyopen;
+namespace Lmh\EasyOpen;
 
-use lmh\easyopen\Collector\OpenMappingCollector;
-use lmh\easyopen\Listener\OpenMappingListener;
+use Lmh\EasyOpen\Listener\OpenMappingListener;
 
 
 class ConfigProvider
@@ -23,11 +22,6 @@ class ConfigProvider
         return [
             'dependencies' => [
             ],
-            'commands' => [
-            ],
-            'listeners' => [
-                OpenMappingListener::class,
-            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [
@@ -35,6 +29,11 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'commands' => [
+            ],
+            'listeners' => [
+                OpenMappingListener::class,
+            ]
         ];
     }
 }

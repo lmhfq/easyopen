@@ -7,16 +7,16 @@ declare(strict_types=1);
  * Time: 下午7:03
  */
 
-namespace lmh\easyopen\Listener;
+namespace Lmh\EasyOpen\Listener;
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Utils\Str;
-use lmh\easyopen\Annotation\OpenMapping;
-use lmh\easyopen\Annotation\OpenService;
-use lmh\easyopen\Collector\OpenMappingCollector;
+use Lmh\EasyOpen\Annotation\OpenMapping;
+use Lmh\EasyOpen\Annotation\OpenService;
+use Lmh\EasyOpen\Collector\OpenMappingCollector;
 
 class OpenMappingListener implements ListenerInterface
 {

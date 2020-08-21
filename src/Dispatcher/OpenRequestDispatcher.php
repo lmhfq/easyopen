@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Time: 上午10:26
  */
 
-namespace lmh\easyopen\Dispatcher;
+namespace Lmh\EasyOpen\Dispatcher;
 
 
 use Hyperf\Contract\ContainerInterface;
@@ -16,8 +16,13 @@ use Hyperf\Dispatcher\AbstractDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
+use Hyperf\Validation\ValidatorFactory;
+use Lmh\EasyOpen\Constant\RequestParamsConstant;
+use Lmh\EasyOpen\OpenRequestParams;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use lmh\easyopen\Collector\OpenMappingCollector;
+use Lmh\EasyOpen\Collector\OpenMappingCollector;
 
 class OpenRequestDispatcher extends AbstractDispatcher
 {
@@ -34,10 +39,17 @@ class OpenRequestDispatcher extends AbstractDispatcher
     public function dispatch(...$params)
     {
         [$request,] = $params;
+        /**
+         * @var RequestInterface $request
+         */
         $contents = $request->getBody()->getContents();
-        //参数校验 TODO
-        //签名校验 TODO
         $contents = json_decode($contents, true);
+        
+        //参数校验 TODO
+        $this->validate($contents);
+        //签名校验 TODO
+        $requestParams = new OpenRequestParams();
+        $requestParams->method = $contents['method'];
 
         /**
          * @var OpenMappingCollector $collector
@@ -72,6 +84,36 @@ class OpenRequestDispatcher extends AbstractDispatcher
             $response = $responseInterface->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
         }
         return $response->withAddedHeader('Server', 'Hyperf');
+    }
+
+    /**
+     * @param array $input
+     */
+    protected function validate(array $input)
+    {
+        /**
+         * @var ValidatorFactory $factory
+         */
+        try {
+            $factory = $this->container->get(ValidatorFactoryInterface::class);
+        }catch (\Exception $exception){
+            var_dump($exception);exit;
+        }
+        var_dump($factory);exit;
+      
+        $rules = [
+            RequestParamsConstant::APP_ID_NAME => 'required|max:20',
+            RequestParamsConstant::BIZ_CONTENT_NAME => 'required',
+        ];
+        $messages = [
+//            RequestParamsConstant::APP_ID_NAME . '.required' => 'A title is required',
+//            RequestParamsConstant::BIZ_CONTENT_NAME . '.required' => 'A message is required',
+        ];
+        $validator = $factory->make($input, $rules);
+        if (!$validator->passes()) {
+            $validator->errors();
+            var_dump(1);exit;
+        }
     }
 
 }
