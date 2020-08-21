@@ -126,13 +126,17 @@ class OpenResponseResult implements Arrayable, Jsonable
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             'code' => $this->getCode(),
             'msg' => $this->getMsg(),
             'sub_error_code' => $this->getSubCode(),
             'sub_msg' => $this->getSubMsg(),
-            'response' => $this->getResponse()
+
         ];
+        if ($this->getResponse()) {
+            $data['response'] = $this->getResponse();
+        }
+        return $data;
     }
 
     public function __toString(): string

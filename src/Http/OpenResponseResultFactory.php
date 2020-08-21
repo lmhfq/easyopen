@@ -10,25 +10,24 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Http;
 
 
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
-use Psr\Http\Message\ResponseInterface as ResponseInterfaceAlias;
+use Psr\Http\Message\ResponseInterface;
 
 class OpenResponseResultFactory
 {
     /**
      * 成功返回
-     * @param ResponseInterfaceAlias $response
-     * @return ResponseInterfaceAlias
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
-    public static function success(ResponseInterfaceAlias $response): ResponseInterfaceAlias
+    public static function success(ResponseInterface $response): ResponseInterface
     {
         $openResponseResult = new OpenResponseResult();
         $openResponseResult->setCode(ErrorCode::SUCCESS);
         $openResponseResult->setMsg(ErrorCode::getMessage(ErrorCode::SUCCESS));
         $openResponseResult->setResponse([]);
-        return $response->withStatus(200)->withBody(new SwooleStream($openResponseResult->toJson()));
+        return $response->withStatus(200)->json($openResponseResult->toArray());
     }
 
 
@@ -36,16 +35,16 @@ class OpenResponseResultFactory
      * 失败返回
      * @param int $errorCode
      * @param string $subErrorCode
-     * @param ResponseInterfaceAlias $response
-     * @return ResponseInterfaceAlias
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
-    public static function error(int $errorCode, string $subErrorCode, ResponseInterfaceAlias $response): ResponseInterfaceAlias
+    public static function error(int $errorCode, string $subErrorCode, ResponseInterface $response): ResponseInterface
     {
         $openResponseResult = new OpenResponseResult();
         $openResponseResult->setCode($errorCode);
         $openResponseResult->setMsg(ErrorCode::getMessage($errorCode));
         $openResponseResult->setSubCode($subErrorCode);
         $openResponseResult->setSubMsg(ErrorSubCode::getMessage($subErrorCode));
-        return $response->withStatus(200)->withBody(new SwooleStream($openResponseResult->toJson()));
+        return $response->withStatus(200)->json($openResponseResult->toArray());
     }
 }
