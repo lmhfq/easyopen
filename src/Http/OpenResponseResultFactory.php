@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Http;
 
 
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
 use Psr\Http\Message\ResponseInterface;
@@ -27,7 +28,7 @@ class OpenResponseResultFactory
         $openResponseResult->setCode(ErrorCode::SUCCESS);
         $openResponseResult->setMsg(ErrorCode::getMessage(ErrorCode::SUCCESS));
         $openResponseResult->setResponse([]);
-        return $response->withStatus(200)->json($openResponseResult->toArray());
+        return OpenResponse::xml($response, $openResponseResult->toArray());
     }
 
 
@@ -45,6 +46,6 @@ class OpenResponseResultFactory
         $openResponseResult->setMsg(ErrorCode::getMessage($errorCode));
         $openResponseResult->setSubCode($subErrorCode);
         $openResponseResult->setSubMsg(ErrorSubCode::getMessage($subErrorCode));
-        return $response->withStatus(200)->json($openResponseResult->toArray());
+        return OpenResponse::xml($response, $openResponseResult->toArray());
     }
 }
