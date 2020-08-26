@@ -18,6 +18,11 @@ use Throwable;
 
 class ErrorCodeExceptionHandler extends ExceptionHandler
 {
+    /**
+     * @param Throwable $throwable
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         // 判断被捕获到的异常是希望被捕获的异常

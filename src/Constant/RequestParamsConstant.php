@@ -15,34 +15,46 @@ class RequestParamsConstant
     /**
      * @var string 请求方法名称
      */
-    const   METHOD_FIELD = "method";
+    const METHOD_FIELD = "method";
     /**
      * @var string 请求版本号名称
      */
-    const   VERSION_FIELD = "version";
+    const VERSION_FIELD = "version";
     /**
      * @var string 请求APPID名称
      */
-    const   APP_ID_FIELD = "app_id";
+    const APP_ID_FIELD = "app_id";
+    /**
+     * @var string 请求APP_SECRET名称
+     */
+    const APP_SECRET_FIELD = "app_secret";
     /**
      * @var string 请求业务参数名称
      */
-    const   BIZ_CONTENT_FIELD = "biz_content";
+    const BIZ_CONTENT_FIELD = "biz_content";
     /**
      * @var string 请求时间名称
      */
-    const   TIMESTAMP_FIELD = "timestamp";
+    const TIMESTAMP_FIELD = "timestamp";
     /**
      * @var string 请求签名名称
      */
-    const   SIGN_FIELD = "sign";
+    const SIGN_FIELD = "sign";
+    /**
+     * @var string 请求签名名称
+     */
+    const NONCE_FIELD = "nonce";
+    /**
+     * @var string 请求公钥名称
+     */
+    const PUBLIC_KEY_FIELD = "public_key";
     /**
      * @var string 请求格式名称
      */
-    const   FORMAT_FIELD = "format";
+    const FORMAT_FIELD = "format";
     /**
      * @var string 请求签名类型名称
      */
-    const   SIGN_TYPE_FIELD = "sign_type";
+    const SIGN_TYPE_FIELD = "sign_type";
 
 }

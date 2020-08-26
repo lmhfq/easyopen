@@ -60,6 +60,18 @@ class ErrorSubCode extends AbstractConstants
      */
     const MISSING_BIZ_CONTENT = 'missing_biz_content';
     /**
+     * @Message("缺少随机参数")
+     */
+    const MISSING_NONCE = 'missing_nonce';
+    /**
+     * @Message("缺少app_secret参数")
+     */
+    const MISSING_APP_SECRET = 'missing_app_secret';
+    /**
+     * @Message("缺少public_key参数")
+     */
+    const MISSING_PUBLIC_KEY = 'missing_public_key';
+    /**
      * @Message("参数无效")
      */
     const INVALID_PARAMETER = 'invalid_parameter';

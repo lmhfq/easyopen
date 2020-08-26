@@ -19,6 +19,7 @@ use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 class OpenResponse
 {
@@ -50,7 +51,7 @@ class OpenResponse
     public static function xml($data, ?ResponseInterface $response = null, string $root = 'root'): ResponseInterface
     {
         if (is_string($data)) {
-            $data = Json::decode($data, true);;
+            $data = Json::decode($data, true);
         }
         $data = static::toXml($data, null, $root);
         return static::getResponse($response)->withAddedHeader('content-type', 'application/xml; charset=utf-8')
@@ -92,7 +93,7 @@ class OpenResponse
     {
         try {
             $result = Json::encode($data);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new EncodingException($exception->getMessage(), $exception->getCode());
         }
         return $result;

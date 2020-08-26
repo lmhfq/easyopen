@@ -28,6 +28,10 @@ class OpenRequestParams
      */
     public $app_id;
     /**
+     * @var string 密钥，非对称加密需要
+     */
+    public $app_secret;
+    /**
      * @var string
      */
     public $method;
@@ -38,11 +42,19 @@ class OpenRequestParams
     /**
      * @var string
      */
-    public $sign_type = 'RSA2';
+    public $sign_type = 'MD5';
     /**
      * @var string
      */
     public $sign;
+    /**
+     * @var string 随机字符串 非对称加密需要
+     */
+    public $nonce;
+    /**
+     * @var string 公钥，对称加密需要
+     */
+    public $public_key;
     /**
      * @var string
      */
