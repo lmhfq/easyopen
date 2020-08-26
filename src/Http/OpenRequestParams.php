@@ -9,7 +9,18 @@ declare(strict_types=1);
 
 namespace Lmh\EasyOpen\Http;
 
-
+/**
+ * Class OpenRequestParams
+ * @package Lmh\EasyOpen\Http
+ * User: lmh <lmh@weiyian.com>
+ * Date: 2020/8/24
+ * @property string $app_id
+ * @property string $method
+ * @property string $sign
+ * @property string $timestamp
+ * @property string $version
+ * @property string $biz_content
+ */
 class OpenRequestParams
 {
     /**

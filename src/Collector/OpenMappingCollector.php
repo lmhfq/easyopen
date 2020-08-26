@@ -12,6 +12,9 @@ namespace Lmh\EasyOpen\Collector;
 
 class OpenMappingCollector
 {
+    /**
+     * @var array
+     */
     protected $staticMapping = [];
 
     public function addMapping($httpMethod, $route, $handler)

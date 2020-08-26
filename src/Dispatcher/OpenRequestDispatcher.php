@@ -13,17 +13,15 @@ namespace Lmh\EasyOpen\Dispatcher;
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Dispatcher\AbstractDispatcher;
-use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Lmh\EasyOpen\Constant\RequestParamsConstant;
 use Lmh\EasyOpen\Exception\ErrorCodeException;
-use Lmh\EasyOpen\Http\OpenRequestParams;
-use Lmh\EasyOpen\Http\OpenResponse;
+use Lmh\EasyOpen\Handler\ValidatorHandler;
 use Lmh\EasyOpen\Http\OpenResponseResultFactory;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
+use Lmh\EasyOpen\Support\ParamsValidator;
+use Lmh\EasyOpen\Support\SignValidator;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Lmh\EasyOpen\Collector\OpenMappingCollector;
@@ -48,74 +46,39 @@ class OpenRequestDispatcher extends AbstractDispatcher
          */
         $contents = $request->getBody()->getContents();
         $contents = json_decode($contents, true);
-
-        //参数校验 TODO
-        $this->validate($contents);
-        //签名校验 TODO
-        $requestParams = new OpenRequestParams();
-        $requestParams->method = $contents['method'];
-
+        //参数校验
+        /**
+         * @var ValidatorHandler $validatorHandler
+         */
+        $validatorHandler = $this->container->get(ValidatorHandler::class);
+        $validatorHandler->addValidator(new ParamsValidator());
+        $validatorHandler->addValidator(new SignValidator());
+        $validatorHandler->run($contents);
         /**
          * @var OpenMappingCollector $collector
          */
         $collector = $this->container->get(OpenMappingCollector::class);
         $mapping = $collector->getStaticMapping();
-        if (!isset($mapping[$contents[RequestParamsConstant::METHOD_NAME]])) {
-
+        if (!isset($mapping[$contents[RequestParamsConstant::METHOD_FIELD]])) {
+            throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_METHOD);
         }
-        $callback = $mapping[$contents[RequestParamsConstant::METHOD_NAME]];
-
-        try {
-            $reflect = new \ReflectionClass($callback[0]);
-        } catch (\Exception  $e) {
-
-            //TODO
-        }
+        $callback = $mapping[$contents[RequestParamsConstant::METHOD_FIELD]];
         /**
          * @var array|Arrayable|mixed|ResponseInterface $response
          */
-        $reflectionMethod = $reflect->getMethod($callback[1]);
-        $parameter = $contents[RequestParamsConstant::BIZ_CONTENT_NAME];
+        try {
+            $reflect = new \ReflectionClass($callback[0]);
+            $reflectionMethod = $reflect->getMethod($callback[1]);
+        } catch (\Exception  $e) {
+            throw new ErrorCodeException(ErrorCode::SYSTEM_ERROR, ErrorSubCode::UNKNOW_ERROR);
+        }
+        $bizContent = $contents[RequestParamsConstant::BIZ_CONTENT_FIELD];
+       // var_dump($reflectionMethod->isStatic());exit;
         if ($reflectionMethod->isStatic()) {
-            $response = call_user_func($callback, $parameter);
+            $response = call_user_func($callback, $bizContent);
         } else {
-            $response = $reflectionMethod->invoke($reflect->newInstance(), $parameter);
+            $response = $reflectionMethod->invoke($reflect->newInstance(), $bizContent);
         }
         return OpenResponseResultFactory::success($response);
     }
-
-    /**
-     * @param array $input
-     */
-    protected function validate(array $input)
-    {
-
-        /**
-         * @var ValidatorFactoryInterface $factory
-         */
-        try {
-            $factory = $this->container->get(ValidatorFactoryInterface::class);
-        } catch (\Throwable $exception) {
-            throw new ErrorCodeException(ErrorCode::SYSTEM_ERROR, ErrorSubCode::UNKNOW_ERROR);
-        }
-        $rules = [
-            RequestParamsConstant::APP_ID_NAME => 'required|max:20',
-            RequestParamsConstant::BIZ_CONTENT_NAME => 'required',
-        ];
-        $messages = [
-            RequestParamsConstant::APP_ID_NAME . '.required' => ErrorSubCode::MISSING_APP_ID,
-            RequestParamsConstant::BIZ_CONTENT_NAME . '.required' => ErrorSubCode::MISSING_BIZ_CONTENT,
-        ];
-
-        $validator = $factory->make($input, $rules, $messages);
-        if ($validator->fails()) {
-            //new \Hyperf\Utils\MessageBag();
-            $messages = $validator->errors()->getMessages();
-            foreach ($messages as $message) {
-                throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, $message[0]);
-            }
-            // throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, $messages[]);
-        }
-    }
-
 }
