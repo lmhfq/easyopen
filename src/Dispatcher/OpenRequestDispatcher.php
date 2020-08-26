@@ -45,7 +45,7 @@ class OpenRequestDispatcher extends AbstractDispatcher
          * @var RequestInterface $request
          */
         $contents = $request->getBody()->getContents();
-        $contents = json_decode($contents, true);  
+        $contents = json_decode($contents, true);
         //参数校验
         /**
          * @var ValidatorHandler $validatorHandler
@@ -73,7 +73,6 @@ class OpenRequestDispatcher extends AbstractDispatcher
             throw new ErrorCodeException(ErrorCode::SYSTEM_ERROR, ErrorSubCode::UNKNOW_ERROR);
         }
         $bizContent = $contents[RequestParamsConstant::BIZ_CONTENT_FIELD];
-        var_dump($reflectionMethod->isStatic());exit;
         if ($reflectionMethod->isStatic()) {
             $response = call_user_func($callback, $bizContent);
         } else {

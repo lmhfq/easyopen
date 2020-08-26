@@ -22,7 +22,7 @@ class SignValidator implements Validator
      */
     public function validate($input)
     {
-        $sign = $content[RequestParamsConstant::SIGN_FIELD] ?? '';
+        $sign = $input[RequestParamsConstant::SIGN_FIELD] ?? '';
         if ($input[RequestParamsConstant::SIGN_TYPE_FIELD] == 'MD5') {
             if (!isset($input[RequestParamsConstant::APP_SECRET_FIELD])) {
                 throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, ErrorSubCode::MISSING_APP_SECRET);
@@ -33,7 +33,6 @@ class SignValidator implements Validator
             }
             $signHandler = new MD5();
             $verify = $signHandler->verify($input, $sign, $appSecret);
-
         } else if ($input[RequestParamsConstant::SIGN_TYPE_FIELD] == 'RSA') {
             if (!isset($input[RequestParamsConstant::PUBLIC_KEY_FIELD])) {
                 throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, ErrorSubCode::MISSING_PUBLIC_KEY);

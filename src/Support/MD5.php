@@ -13,14 +13,15 @@ namespace Lmh\EasyOpen\Support;
 class MD5
 {
     /**
-     * @param array $attributes
+     * @param array $params
      * @param $key
      * @param string $encryptMethod
      * @return string
      */
-    public function sign(array $attributes, $key, $encryptMethod = 'md5')
+    public function sign(array $params, $key, $encryptMethod = 'md5')
     {
-        ksort($attributes);
+        unset($params['sign']);
+        ksort($params);
         $attributes['key'] = $key;
         return strtoupper(call_user_func_array($encryptMethod, [urldecode(http_build_query($attributes))]));
     }

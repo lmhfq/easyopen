@@ -65,17 +65,19 @@ class RSA
      */
     private function getSignContent($params, $isVerify = false)
     {
-        $systemParams = $params;
-        unset($systemParams[RequestParamsConstant::BIZ_CONTENT_FIELD]);
-        $bizParams = $params[RequestParamsConstant::BIZ_CONTENT_FIELD] ?? [];
-        if ($bizParams) {
-            $sortedMap[RequestParamsConstant::BIZ_CONTENT_FIELD] = json_encode($bizParams, JSON_UNESCAPED_UNICODE);
+        $bizParams = [];
+        if (isset($params[RequestParamsConstant::BIZ_CONTENT_FIELD])) {
+            $bizParams = $params[RequestParamsConstant::BIZ_CONTENT_FIELD];
+            unset($params[RequestParamsConstant::BIZ_CONTENT_FIELD]);
         }
-        ksort($params);
+        if ($bizParams) {
+            $params[RequestParamsConstant::BIZ_CONTENT_FIELD] = json_encode($bizParams, JSON_UNESCAPED_UNICODE);
+        }
         unset($params['sign']);
         if ($isVerify) {
             unset($params['sign_type']);
         }
+        ksort($params);
         $stringToBeSigned = "";
         $i = 0;
         foreach ($params as $k => $v) {
