@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Http;
 
 
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
 use Psr\Http\Message\ResponseInterface;
@@ -19,6 +18,7 @@ class OpenResponseResultFactory
 {
     /**
      * 成功返回
+     * @param array $data
      * @param ResponseInterface $response
      * @return ResponseInterface
      */

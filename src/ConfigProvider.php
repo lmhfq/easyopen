@@ -32,11 +32,13 @@ class ConfigProvider
             'listeners' => [
                 \Lmh\EasyOpen\Listener\OpenMappingListener::class,
             ],
-            'handler' => [
-                'http' => [
-                    \Lmh\EasyOpen\Handler\ErrorCodeExceptionHandler::class
-                ],
-            ],
+            'exceptions' => [
+                'handler' => [
+                    'http' => [
+                        \Lmh\EasyOpen\Handler\ErrorCodeExceptionHandler::class
+                    ],
+                ]
+            ]
         ];
     }
 }
