@@ -29,7 +29,7 @@ class ErrorCodeExceptionHandler extends ExceptionHandler
         if ($throwable instanceof ErrorCodeException) {
             // 阻止异常冒泡
             $this->stopPropagation();
-            return OpenResponseResultFactory::error($throwable->getCode(), $throwable->getSubErrorCode(), $response);
+            return OpenResponseResultFactory::error($throwable->getCode(), $throwable->getSubErrorCode(), $throwable->getParams(), $response);
         }
         // 交给下一个异常处理器
         return $response;

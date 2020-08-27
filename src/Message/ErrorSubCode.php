@@ -18,7 +18,7 @@ use Hyperf\Constants\Annotation\Constants;
  * @package Lmh\EasyOpen\Message
  * User: lmh <lmh@weiyian.com>
  * Date: 2020/8/21
- * @method static string getMessage(string $error_code)
+ * @method static string getMessage(string $error_code,array $params)
  * @Constants
  */
 class ErrorSubCode extends AbstractConstants
@@ -27,6 +27,10 @@ class ErrorSubCode extends AbstractConstants
      * @Message("服务暂不可用（业务系统不可用）")
      */
     const UNKNOW_ERROR = 'unknow_error';
+    /**
+     * @Message("缺少%s参数")
+     */
+    const MISSING_PARAMETER = 'missing_parameter';
     /**
      * @Message("缺少appId参数")r
      */
@@ -72,7 +76,7 @@ class ErrorSubCode extends AbstractConstants
      */
     const MISSING_PUBLIC_KEY = 'missing_public_key';
     /**
-     * @Message("参数无效")
+     * @Message("参数%s无效")
      */
     const INVALID_PARAMETER = 'invalid_parameter';
     /**
