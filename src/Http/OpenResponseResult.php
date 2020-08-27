@@ -31,11 +31,11 @@ class OpenResponseResult implements Arrayable, Jsonable
     /**
      * @var string 明细返回码
      */
-    private $sub_code;
+    private $subCode;
     /**
      * @var string 明细返回码描述
      */
-    private $sub_msg;
+    private $subMsg;
     /**
      * @var array
      */
@@ -78,15 +78,15 @@ class OpenResponseResult implements Arrayable, Jsonable
      */
     public function getSubCode(): ?string
     {
-        return $this->sub_code;
+        return $this->subCode;
     }
 
     /**
-     * @param string $sub_code
+     * @param string $subCode
      */
-    public function setSubCode(string $sub_code): void
+    public function setSubCode(string $subCode): void
     {
-        $this->sub_code = $sub_code;
+        $this->subCode = $subCode;
     }
 
     /**
@@ -94,16 +94,17 @@ class OpenResponseResult implements Arrayable, Jsonable
      */
     public function getSubMsg(): ?string
     {
-        return $this->sub_msg;
+        return $this->subMsg;
     }
 
     /**
-     * @param string $sub_msg
+     * @param string $subMsg
      */
-    public function setSubMsg(string $sub_msg): void
+    public function setSubMsg(string $subMsg): void
     {
-        $this->sub_msg = $sub_msg;
+        $this->subMsg = $subMsg;
     }
+
 
     /**
      * @return array
