@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Lmh\EasyOpen\Message;
 
+use Lmh\EasyOpen\Http\OpenResponseResult;
+
 /**
  * Class ErrorCodeFactory
  * @package Lmh\EasyOpen\Message
