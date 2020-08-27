@@ -66,20 +66,17 @@ class MerchantService
 {
     "method": "merchant.create",
     "app_id": "2016072300007148",
-    "sign": "hq1j1tBCQkJCecJbU1I+9VyRDPyjzBjT6ok7S6QWT72ebJ7nNmTJFy5GLh0Zw9lyciT/1Qd7dDeF RVwqxHW10xzv8qBqjGNq4S1TH1sEukMBk7emkD78javGS0m+6KIEtK1K5gePgqy3HRpxqrD58jqZIOu5FIxY5m 5a93CJC/o=",
+    "sign_type":"MD5",
+    "app_secret":"3432432432432432",
+    "nonce":"xsadasd823mxdjrewrew",
+    "sign": "2FF9EE4B7908DF976FD11E405529DD67",
     "version": "1.0",
     "content": {
-        "body": "scsafcsa",
-        "total_fee": "0.04",
-        "spbill_create_ip": "120.0.0.1",
-        "auth_code": "5",
-        "store_id": "9",
-        "out_trade_no": "9"
+        "merchant_name": "测试公司",
+        "city": "杭州"
     }
 }
 ```
 
 
-##待完善点
-
- * 签名验证
+## 待完善点
