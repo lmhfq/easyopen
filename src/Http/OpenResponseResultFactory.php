@@ -43,9 +43,27 @@ class OpenResponseResultFactory
     {
         $openResponseResult = new OpenResponseResult();
         $openResponseResult->setCode($errorCode);
-        $openResponseResult->setMsg(ErrorCode::getMessage($errorCode));
+        $openResponseResult->setMsg(ErrorCode::getMessage($errorCode) ?? '服务不可用');
         $openResponseResult->setSubCode($subErrorCode);
-        $openResponseResult->setSubMsg(ErrorSubCode::getMessage($subErrorCode));
+        $openResponseResult->setSubMsg(ErrorSubCode::getMessage($subErrorCode) ?? '未知错误');
+        return OpenResponse::json($openResponseResult->toArray(), $response);
+    }
+
+    /**
+     * 失败返回
+     * @param int $errorCode
+     * @param string $subErrorCode
+     * @param string $subErrorMessage
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public static function fail(int $errorCode, string $subErrorCode, string $subErrorMessage, ?ResponseInterface $response = null): ResponseInterface
+    {
+        $openResponseResult = new OpenResponseResult();
+        $openResponseResult->setCode($errorCode);
+        $openResponseResult->setMsg(ErrorCode::getMessage($errorCode) ?? '服务不可用');
+        $openResponseResult->setSubCode($subErrorCode);
+        $openResponseResult->setSubMsg($subErrorMessage);
         return OpenResponse::json($openResponseResult->toArray(), $response);
     }
 }
