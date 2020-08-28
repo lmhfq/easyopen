@@ -58,11 +58,10 @@ class OpenRequestDispatcher extends AbstractDispatcher
          * @var OpenMappingCollector $collector
          */
         $collector = $this->container->get(OpenMappingCollector::class);
-        $mapping = $collector->getStaticMapping();
-        if (!isset($mapping[$contents[RequestParamsConstant::METHOD_FIELD]])) {
+        $callback = $collector->getMapping($contents[RequestParamsConstant::METHOD_FIELD]);
+        if (empty($callback)) {
             throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_METHOD);
         }
-        $callback = $mapping[$contents[RequestParamsConstant::METHOD_FIELD]];
         /**
          * @var array|Arrayable|mixed|ResponseInterface $response
          */

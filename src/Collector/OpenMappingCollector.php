@@ -30,19 +30,18 @@ class OpenMappingCollector
                 $this->staticMapping[$route] = $handler;
             }
         } else {
-            // $method = strtoupper($httpMethod);
+            //$method = strtoupper($httpMethod);
             $this->staticMapping[$route] = $handler;
         }
     }
 
     /**
-     * @param $method
      * @param $route
      * @return bool
      */
-    public function hasRoute($method, $route): bool
+    public function hasMapping($route): bool
     {
-        if (isset($this->staticMapping[$method][$route])) {
+        if (isset($this->staticMapping[$route])) {
             return true;
         }
         return false;
@@ -57,14 +56,13 @@ class OpenMappingCollector
     }
 
     /**
-     * @param $method
      * @param $route
-     * @return mixed|null
+     * @return array|null
      */
-    public function getMapping($method, $route)
+    public function getMapping($route): ?array
     {
-        if (isset($this->staticMapping[$method][$route])) {
-            return $this->staticMapping[$method][$route];
+        if (isset($this->staticMapping[$route])) {
+            return $this->staticMapping[$route];
         }
         return null;
     }
