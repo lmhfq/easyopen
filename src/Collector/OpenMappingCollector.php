@@ -17,7 +17,12 @@ class OpenMappingCollector
      */
     protected $staticMapping = [];
 
-    public function addMapping($httpMethod, $route, $handler)
+    /**
+     * @param array|string $httpMethod
+     * @param string $route
+     * @param array $handler
+     */
+    public function addMapping($httpMethod, string $route, $handler)
     {
         if (is_array($httpMethod)) {
             foreach ($httpMethod as $method) {
@@ -30,6 +35,11 @@ class OpenMappingCollector
         }
     }
 
+    /**
+     * @param $method
+     * @param $route
+     * @return bool
+     */
     public function hasRoute($method, $route): bool
     {
         if (isset($this->staticMapping[$method][$route])) {
@@ -38,12 +48,19 @@ class OpenMappingCollector
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function getStaticMapping()
     {
         return $this->staticMapping;
     }
 
-
+    /**
+     * @param $method
+     * @param $route
+     * @return mixed|null
+     */
     public function getMapping($method, $route)
     {
         if (isset($this->staticMapping[$method][$route])) {
