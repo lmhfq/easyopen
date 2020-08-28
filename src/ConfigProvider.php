@@ -38,9 +38,6 @@ class ConfigProvider
                         \Lmh\EasyOpen\Handler\ErrorCodeExceptionHandler::class
                     ],
                 ]
-            ],
-            'translation'=>[
-
             ]
         ];
     }
