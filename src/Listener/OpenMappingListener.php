@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Listener;
 
 use Hyperf\Contract\ContainerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
@@ -24,10 +25,15 @@ class OpenMappingListener implements ListenerInterface
      * @var ContainerInterface
      */
     protected $container;
+    /**
+     * @var StdoutLoggerInterface
+     */
+    private $logger;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger)
     {
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     public function listen(): array
@@ -66,6 +72,7 @@ class OpenMappingListener implements ListenerInterface
             $annotation = $annotationMethod['annotation'];
             $path = $prefix . $annotation->path;
             $collector->addMapping($annotation->methods, $path, [$class, $method]);
+            $this->logger->info(sprintf('Mapped "{[%s ],methods=[%s]}" on %s', $path, implode(',', $annotation->methods), $class . '@' . $method));
         }
     }
 }
