@@ -38,7 +38,7 @@ class OpenRequestDispatcher extends AbstractDispatcher
         $this->container = $container;
     }
 
-    public function dispatch(...$params)
+    public function dispatch(...$params): ResponseInterface
     {
         [$request,] = $params;
         /**
@@ -59,9 +59,10 @@ class OpenRequestDispatcher extends AbstractDispatcher
          */
         $collector = $this->container->get(OpenMappingCollector::class);
         $callback = $collector->getMapping($contents[RequestParamsConstant::METHOD_FIELD]);
-        if (empty($callback)) {
+        if ($callback == null) {
             throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_METHOD);
         }
+        [$controller, $action] = $callback;
         /**
          * @var array|Arrayable|mixed|ResponseInterface $response
          */
@@ -79,4 +80,6 @@ class OpenRequestDispatcher extends AbstractDispatcher
         }
         return OpenResponseResultFactory::success($response);
     }
+
+
 }

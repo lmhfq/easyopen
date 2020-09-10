@@ -32,7 +32,7 @@ class ErrorSubCode extends AbstractConstants
      */
     const MISSING_PARAMETER = 'missing_parameter';
     /**
-     * @Message("缺少appId参数")r
+     * @Message("缺少appId参数")
      */
     const MISSING_APP_ID = 'missing_app_id';
     /**
