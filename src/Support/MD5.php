@@ -15,15 +15,15 @@ class MD5
     /**
      * @param array $params
      * @param $key
-     * @param string $encryptMethod
      * @return string
      */
-    public function sign(array $params, $key, $encryptMethod = 'md5')
+    public function sign(array $params, $key)
     {
         unset($params['sign']);
         ksort($params);
-        $attributes['key'] = $key;
-        return strtoupper(call_user_func_array($encryptMethod, [urldecode(http_build_query($attributes))]));
+        $params['key'] = $key;
+        $params = urldecode(http_build_query($params));
+        return strtoupper(md5($params));
     }
 
     /**

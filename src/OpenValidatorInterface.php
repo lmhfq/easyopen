@@ -7,10 +7,10 @@ declare(strict_types=1);
  * Time: 下午3:46
  */
 
-namespace Lmh\EasyOpen\Support;
+namespace Lmh\EasyOpen;
 
 
-interface Validator
+interface OpenValidatorInterface
 {
     /**
      * 验证处理

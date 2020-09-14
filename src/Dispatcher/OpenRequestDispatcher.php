@@ -14,12 +14,15 @@ namespace Lmh\EasyOpen\Dispatcher;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Dispatcher\AbstractDispatcher;
 use Hyperf\Utils\Contracts\Arrayable;
-use Lmh\EasyOpen\Constant\RequestParamsConstant;
+use Lmh\EasyOpen\ApplicationDataFetchFactory;
+use Lmh\EasyOpen\ApplicationDataFetchInterface;
+use Lmh\EasyOpen\Constant\RequestParamst;
 use Lmh\EasyOpen\Exception\ErrorCodeException;
 use Lmh\EasyOpen\Handler\ValidatorHandler;
 use Lmh\EasyOpen\Http\OpenResponseResultFactory;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
+use Lmh\EasyOpen\OpenValidatorInterface;
 use Lmh\EasyOpen\Support\ParamsValidator;
 use Lmh\EasyOpen\Support\SignValidator;
 use Psr\Http\Message\RequestInterface;
@@ -32,12 +35,32 @@ class OpenRequestDispatcher extends AbstractDispatcher
      * @var ContainerInterface
      */
     private $container;
+    /**
+     * @var ValidatorHandler
+     */
+    private $validatorHandler;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->validatorHandler = $this->container->get(ValidatorHandler::class);
+        $this->validatorHandler->addValidator(new ParamsValidator());
+        $this->validatorHandler->addValidator(new SignValidator());
     }
 
+    /**
+     * 添加自定义验证器具
+     * @param OpenValidatorInterface $validator
+     */
+    public function addValidator(OpenValidatorInterface $validator)
+    {
+        $this->validatorHandler->addValidator($validator);
+    }
+
+    /**
+     * @param mixed ...$params
+     * @return ResponseInterface
+     */
     public function dispatch(...$params): ResponseInterface
     {
         [$request,] = $params;
@@ -46,19 +69,15 @@ class OpenRequestDispatcher extends AbstractDispatcher
          */
         $contents = $request->getBody()->getContents();
         $contents = json_decode($contents, true);
-        //参数校验
         /**
          * @var ValidatorHandler $validatorHandler
          */
-        $validatorHandler = $this->container->get(ValidatorHandler::class);
-        $validatorHandler->addValidator(new ParamsValidator());
-        $validatorHandler->addValidator(new SignValidator());
-        $validatorHandler->run($contents);
+        $this->validatorHandler->run($contents);
         /**
          * @var OpenMappingCollector $collector
          */
         $collector = $this->container->get(OpenMappingCollector::class);
-        $callback = $collector->getMapping($contents[RequestParamsConstant::METHOD_FIELD]);
+        $callback = $collector->getMapping($contents[RequestParamst::METHOD_FIELD]);
         if ($callback == null) {
             throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_METHOD);
         }
@@ -67,12 +86,12 @@ class OpenRequestDispatcher extends AbstractDispatcher
          * @var array|Arrayable|mixed|ResponseInterface $response
          */
         try {
-            $reflect = new \ReflectionClass($callback[0]);
-            $reflectionMethod = $reflect->getMethod($callback[1]);
+            $reflect = new \ReflectionClass($controller);
+            $reflectionMethod = $reflect->getMethod($action);
         } catch (\Exception  $e) {
             throw new ErrorCodeException(ErrorCode::SYSTEM_ERROR, ErrorSubCode::UNKNOW_ERROR);
         }
-        $bizContent = $contents[RequestParamsConstant::BIZ_CONTENT_FIELD];
+        $bizContent = $contents[RequestParamst::BIZ_CONTENT_FIELD];
         if ($reflectionMethod->isStatic()) {
             $response = call_user_func($callback, $bizContent);
         } else {
@@ -80,6 +99,4 @@ class OpenRequestDispatcher extends AbstractDispatcher
         }
         return OpenResponseResultFactory::success($response);
     }
-
-
 }

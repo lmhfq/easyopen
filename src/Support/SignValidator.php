@@ -10,38 +10,56 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Support;
 
 
-use Lmh\EasyOpen\Constant\RequestParamsConstant;
+use Hyperf\Utils\ApplicationContext;
+use Lmh\EasyOpen\ApplicationDataFetchInterface;
+use Lmh\EasyOpen\Constant\RequestParamst;
+use Lmh\EasyOpen\Constant\SignType;
+use Lmh\EasyOpen\Exception\ApplicationDataFetchException;
 use Lmh\EasyOpen\Exception\ErrorCodeException;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
+use Lmh\EasyOpen\OpenValidatorInterface;
 
-class SignValidator implements Validator
+class SignValidator implements OpenValidatorInterface
 {
     /**
-     * @param $input
+     * @param array $input
+     * @return mixed|void
      */
     public function validate($input)
     {
-        $sign = $input[RequestParamsConstant::SIGN_FIELD] ?? '';
-        if ($input[RequestParamsConstant::SIGN_TYPE_FIELD] == 'MD5') {
-            if (!isset($input[RequestParamsConstant::APP_SECRET_FIELD])) {
-                throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, ErrorSubCode::MISSING_APP_SECRET);
-            }
-            $appSecret = $input[RequestParamsConstant::APP_SECRET_FIELD];
-            if (!isset($input[RequestParamsConstant::NONCE_FIELD])) {
-                throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, ErrorSubCode::MISSING_NONCE);
-            }
-            $signHandler = new MD5();
-            $verify = $signHandler->verify($input, $sign, $appSecret);
-        } else if ($input[RequestParamsConstant::SIGN_TYPE_FIELD] == 'RSA') {
-            if (!isset($input[RequestParamsConstant::PUBLIC_KEY_FIELD])) {
-                throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, ErrorSubCode::MISSING_PUBLIC_KEY);
-            }
-            $publicKey = $input[RequestParamsConstant::PUBLIC_KEY_FIELD];
-            $signHandler = new RSA();
-            $verify = $signHandler->verify($input, $sign, $publicKey);
-        } else {
-            throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_SIGNATURE_TYPE);
+        $container = ApplicationContext::getContainer();
+        /**
+         * @var ApplicationDataFetchInterface $factory
+         */
+        $factory = $container->get(ApplicationDataFetchInterface::class);
+        $appId = $input[RequestParamst::APP_ID_FIELD] ?? '';
+        $sign = $input[RequestParamst::SIGN_FIELD] ?? '';
+        $signType = $input[RequestParamst::SIGN_TYPE_FIELD] ?? '';
+        if (isset($input[RequestParamst::BIZ_CONTENT_FIELD])) {
+            $input[RequestParamst::BIZ_CONTENT_FIELD] = json_encode($input[RequestParamst::BIZ_CONTENT_FIELD], JSON_UNESCAPED_UNICODE);
+        }
+        try {
+            $factory->make($appId);
+        } catch (ApplicationDataFetchException $e) {
+            throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_APP_ID);
+        }
+        switch ($signType) {
+            case SignType::MD5:
+                $nonce = $input[RequestParamst::NONCE_FIELD] ?? '';
+                if (!$nonce) {
+                    throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, ErrorSubCode::MISSING_NONCE);
+                }
+                $signHandler = new MD5();
+                $verify = $signHandler->verify($input, $sign, $factory->getSecret($appId));
+                break;
+            case SignType::RSA:
+                $signHandler = new RSA();
+                $verify = $signHandler->verify($input, $sign, $factory->getPublicKey($appId));
+                break;
+            default:
+                throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_SIGNATURE_TYPE);
+                break;
         }
         if (!$verify) {
             throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_SIGNATURE);

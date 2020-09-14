@@ -13,13 +13,19 @@ namespace Lmh\EasyOpen\Support;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Rule;
-use Lmh\EasyOpen\Constant\RequestParamsConstant;
+use Lmh\EasyOpen\Constant\RequestParamst;
+use Lmh\EasyOpen\Constant\SignType;
 use Lmh\EasyOpen\Exception\ErrorCodeException;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
+use Lmh\EasyOpen\OpenValidatorInterface;
 
-class ParamsValidator implements Validator
+class ParamsValidator implements OpenValidatorInterface
 {
+    /**
+     * @param array $input
+     * @return bool|mixed
+     */
     public function validate($input)
     {
         /**
@@ -32,20 +38,19 @@ class ParamsValidator implements Validator
             throw new ErrorCodeException(ErrorCode::SYSTEM_ERROR, ErrorSubCode::UNKNOW_ERROR);
         }
         $rules = [
-            RequestParamsConstant::APP_ID_FIELD => 'required|max:20',
-            RequestParamsConstant::METHOD_FIELD => 'required',
-            RequestParamsConstant::BIZ_CONTENT_FIELD => 'required',
-            RequestParamsConstant::SIGN_TYPE_FIELD => [
-                'required', Rule::in(['RSA','MD5']),
+            RequestParamst::APP_ID_FIELD => 'required',
+            RequestParamst::METHOD_FIELD => 'required',
+            RequestParamst::BIZ_CONTENT_FIELD => 'required',
+            RequestParamst::SIGN_TYPE_FIELD => [
+                'required', Rule::in(SignType::toArray()),
             ],
         ];
         $messages = [
-            RequestParamsConstant::APP_ID_FIELD . '.required' => ErrorSubCode::MISSING_APP_ID,
-            RequestParamsConstant::APP_ID_FIELD . '.max' => ErrorSubCode::INVALID_APP_ID,
-            RequestParamsConstant::METHOD_FIELD . '.required' => ErrorSubCode::MISSING_METHOD,
-            RequestParamsConstant::BIZ_CONTENT_FIELD . '.required' => ErrorSubCode::MISSING_BIZ_CONTENT,
-            RequestParamsConstant::SIGN_TYPE_FIELD . '.required' => ErrorSubCode::MISSING_SIGNATURE_TYPE,
-            RequestParamsConstant::SIGN_TYPE_FIELD . '.in' => ErrorSubCode::INVALID_SIGNATURE_TYPE,
+            RequestParamst::APP_ID_FIELD . '.required' => ErrorSubCode::MISSING_APP_ID,
+            RequestParamst::METHOD_FIELD . '.required' => ErrorSubCode::MISSING_METHOD,
+            RequestParamst::BIZ_CONTENT_FIELD . '.required' => ErrorSubCode::MISSING_BIZ_CONTENT,
+            RequestParamst::SIGN_TYPE_FIELD . '.required' => ErrorSubCode::MISSING_SIGNATURE_TYPE,
+            RequestParamst::SIGN_TYPE_FIELD . '.in' => ErrorSubCode::INVALID_SIGNATURE_TYPE,
         ];
         $validator = $factory->make($input, $rules, $messages);
         if ($validator->passes()) {
@@ -53,7 +58,7 @@ class ParamsValidator implements Validator
         }
         $messages = $validator->errors()->getMessages();
         foreach ($messages as $message) {
-            throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, $message[0]);
+            throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, $message[0]);
             break;
         }
         return false;

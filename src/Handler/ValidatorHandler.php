@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Handler;
 
 
-use Lmh\EasyOpen\Support\Validator;
+use Lmh\EasyOpen\OpenValidatorInterface;
 
 class ValidatorHandler
 {
@@ -20,23 +20,23 @@ class ValidatorHandler
     protected $validators = [];
 
     /**
-     * @param Validator $validator
+     * @param OpenValidatorInterface $validator
      */
-    public function addValidator(Validator $validator)
+    public function addValidator(OpenValidatorInterface $validator)
     {
         $this->validators[] = $validator;
 
     }
 
     /**
-     * 参数验证
-     * @param $contents
+     * run validate
+     * @param array $contents
      */
-    public function run($contents)
+    public function run(array $contents)
     {
         foreach ($this->validators as $validator) {
             /**
-             * @var Validator $validator
+             * @var OpenValidatorInterface $validator
              */
             $validator->validate($contents);
         }
