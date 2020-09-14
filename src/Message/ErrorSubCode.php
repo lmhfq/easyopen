@@ -18,7 +18,7 @@ use Hyperf\Constants\Annotation\Constants;
  * @package Lmh\EasyOpen\Message
  * User: lmh <lmh@weiyian.com>
  * Date: 2020/8/21
- * @method static string getMessage(string $error_code,array $params)
+ * @method static string getMessage(string $error_code, array $params = [''])
  * @Constants
  */
 class ErrorSubCode extends AbstractConstants

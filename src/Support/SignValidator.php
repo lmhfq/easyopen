@@ -14,6 +14,7 @@ use Hyperf\Utils\ApplicationContext;
 use Lmh\EasyOpen\ApplicationDataFetchInterface;
 use Lmh\EasyOpen\Constant\RequestParamst;
 use Lmh\EasyOpen\Constant\SignType;
+use Lmh\EasyOpen\Exception\ApplicationDataFetchException;
 use Lmh\EasyOpen\Exception\ErrorCodeException;
 use Lmh\EasyOpen\Message\ErrorCode;
 use Lmh\EasyOpen\Message\ErrorSubCode;
@@ -34,7 +35,11 @@ class SignValidator implements OpenValidatorInterface
         $appId = $input[RequestParamst::APP_ID_FIELD] ?? '';
         $sign = $input[RequestParamst::SIGN_FIELD] ?? '';
         $signType = $input[RequestParamst::SIGN_TYPE_FIELD] ?? '';
-        $factory->make($appId);
+        try {
+            $factory->make($appId);
+        } catch (ApplicationDataFetchException $e) {
+            throw new ErrorCodeException(ErrorCode::INVALID_PARAMETER, ErrorSubCode::INVALID_APP_ID);
+        }
         switch ($signType) {
             case SignType::MD5:
                 $nonce = $input[RequestParamst::NONCE_FIELD] ?? '';
@@ -42,7 +47,6 @@ class SignValidator implements OpenValidatorInterface
                     throw new ErrorCodeException(ErrorCode::MISSING_PARAMETER, ErrorSubCode::MISSING_NONCE);
                 }
                 $signHandler = new MD5();
-                $secret = $factory->getSecret($appId);
                 $verify = $signHandler->verify($input, $sign, $factory->getSecret($appId));
                 break;
             case SignType::RSA:
