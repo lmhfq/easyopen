@@ -67,7 +67,6 @@ class MerchantService
     "method": "merchant.create",
     "app_id": "2016072300007148",
     "sign_type":"MD5",
-    "app_secret":"3432432432432432",
     "nonce":"xsadasd823mxdjrewrew",
     "sign": "2FF9EE4B7908DF976FD11E405529DD67",
     "version": "1.0",
@@ -77,6 +76,3 @@ class MerchantService
     }
 }
 ```
-
-
-## 待完善点
