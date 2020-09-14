@@ -17,7 +17,6 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-        $migrationsPath = BASE_PATH . DIRECTORY_SEPARATOR . 'migrations';
         return [
             'dependencies' => [
             ],
@@ -39,7 +38,15 @@ class ConfigProvider
                         \Lmh\EasyOpen\Handler\ErrorCodeExceptionHandler::class
                     ],
                 ]
-            ]
+            ],
+            'publish' => [
+                [
+                    'id' => 'easyopen',
+                    'description' => 'easyopen config file.',
+                    'source' => __DIR__ . '/../publish/easyopen.php',
+                    'destination' => BASE_PATH . '/config/autoload/easyopen.php',
+                ],
+            ],
         ];
     }
 }

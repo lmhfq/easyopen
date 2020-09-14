@@ -23,7 +23,8 @@ use Lmh\EasyOpen\OpenValidatorInterface;
 class SignValidator implements OpenValidatorInterface
 {
     /**
-     * @param $input
+     * @param array $input
+     * @return mixed|void
      */
     public function validate($input)
     {
@@ -35,6 +36,9 @@ class SignValidator implements OpenValidatorInterface
         $appId = $input[RequestParamst::APP_ID_FIELD] ?? '';
         $sign = $input[RequestParamst::SIGN_FIELD] ?? '';
         $signType = $input[RequestParamst::SIGN_TYPE_FIELD] ?? '';
+        if (isset($input[RequestParamst::BIZ_CONTENT_FIELD])) {
+            $input[RequestParamst::BIZ_CONTENT_FIELD] = json_encode($input[RequestParamst::BIZ_CONTENT_FIELD], JSON_UNESCAPED_UNICODE);
+        }
         try {
             $factory->make($appId);
         } catch (ApplicationDataFetchException $e) {

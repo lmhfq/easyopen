@@ -9,53 +9,46 @@ declare(strict_types=1);
 
 namespace Lmh\EasyOpen\Support;
 
-
-use Lmh\EasyOpen\Constant\RequestParamst;
-
 class RSA
 {
     /**
-     * @param $content        string 待签名的内容
-     * @param $privateKeyPem  string 私钥
-     * @return string         签名值的Base64串
+     * 流程
+     * 1、删除参数前后空格和空值参数
+     * 2、删除sign
+     * 3、排序
+     * 4、签名
+     * @param $content
+     * @param $privateKey
+     * @return string
      */
-    public function sign($content, $privateKeyPem)
+    public function sign($content, $privateKey)
     {
         $content = $this->getSignContent($content);
-        $priKey = $privateKeyPem;
-        $res = "-----BEGIN RSA PRIVATE KEY-----\n" .
-            wordwrap($priKey, 64, "\n", true) .
+        $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n" .
+            wordwrap($privateKey, 64, "\n", true) .
             "\n-----END RSA PRIVATE KEY-----";
-        ($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
-
-        openssl_sign($content, $sign, $res, OPENSSL_ALGO_SHA256);
-        $sign = base64_encode($sign);
-        return $sign;
+        openssl_sign($content, $sign, $privateKey, OPENSSL_ALGO_SHA256);
+        return base64_encode($sign);
     }
 
     /**
      * 流程
-     * 1、从报文取出签名sign值
-     * 2、删除空的参数
-     * 3、删除sign sign_type
-     * 4、排序
+     * 1、从报文取出签名sign并值解密
+     * 2、删除sign
+     * 3、排序
      * 5、验证
      * @param $content
      * @param $sign
-     * @param $publicKeyPem
+     * @param $publicKey
      * @return bool
      */
-    public function verify($content, $sign, $publicKeyPem): bool
+    public function verify($content, $sign, $publicKey): bool
     {
         $content = $this->getSignContent($content);
-        $pubKey = $publicKeyPem;
-        $res = "-----BEGIN PUBLIC KEY-----\n" .
-            wordwrap($pubKey, 64, "\n", true) .
+        $publicKey = "-----BEGIN PUBLIC KEY-----\n" .
+            wordwrap($publicKey, 64, "\n", true) .
             "\n-----END PUBLIC KEY-----";
-        ($res) or die('RSA公钥错误。请检查公钥文件格式是否正确');
-
-        //调用openssl内置方法验签，返回bool值
-        return openssl_verify($content, base64_decode($sign), $res, OPENSSL_ALGO_SHA256) === 1;
+        return openssl_verify($content, base64_decode($sign), $publicKey, OPENSSL_ALGO_SHA256) === 1;
     }
 
     /**
@@ -65,32 +58,8 @@ class RSA
      */
     private function getSignContent($params, $isVerify = false)
     {
-        $bizParams = [];
-        if (isset($params[RequestParamst::BIZ_CONTENT_FIELD])) {
-            $bizParams = $params[RequestParamst::BIZ_CONTENT_FIELD];
-            unset($params[RequestParamst::BIZ_CONTENT_FIELD]);
-        }
-        if ($bizParams) {
-            $params[RequestParamst::BIZ_CONTENT_FIELD] = json_encode($bizParams, JSON_UNESCAPED_UNICODE);
-        }
         unset($params['sign']);
-        if ($isVerify) {
-            unset($params['sign_type']);
-        }
         ksort($params);
-        $stringToBeSigned = "";
-        $i = 0;
-        foreach ($params as $k => $v) {
-            if ($v != '' && "@" != substr($v, 0, 1)) {
-                if ($i == 0) {
-                    $stringToBeSigned .= "$k" . "=" . "$v";
-                } else {
-                    $stringToBeSigned .= "&" . "$k" . "=" . "$v";
-                }
-                $i++;
-            }
-        }
-        unset ($k, $v);
-        return $stringToBeSigned;
+        return urldecode(http_build_query($params));
     }
 }

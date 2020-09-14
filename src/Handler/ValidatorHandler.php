@@ -29,10 +29,10 @@ class ValidatorHandler
     }
 
     /**
-     * 参数验证
-     * @param $contents
+     * run validate
+     * @param array $contents
      */
-    public function run($contents)
+    public function run(array $contents)
     {
         foreach ($this->validators as $validator) {
             /**

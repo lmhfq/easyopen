@@ -22,6 +22,10 @@ use Lmh\EasyOpen\OpenValidatorInterface;
 
 class ParamsValidator implements OpenValidatorInterface
 {
+    /**
+     * @param array $input
+     * @return bool|mixed
+     */
     public function validate($input)
     {
         /**
