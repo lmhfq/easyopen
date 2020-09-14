@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Constant;
 
 
-class RequestParamsConstant
+class RequestParamst
 {
     /**
      * @var string 请求方法名称
@@ -24,10 +24,6 @@ class RequestParamsConstant
      * @var string 请求APPID名称
      */
     const APP_ID_FIELD = "app_id";
-    /**
-     * @var string 请求APP_SECRET名称
-     */
-    const APP_SECRET_FIELD = "app_secret";
     /**
      * @var string 请求业务参数名称
      */
@@ -44,10 +40,6 @@ class RequestParamsConstant
      * @var string 请求签名名称
      */
     const NONCE_FIELD = "nonce";
-    /**
-     * @var string 请求公钥名称
-     */
-    const PUBLIC_KEY_FIELD = "public_key";
     /**
      * @var string 请求格式名称
      */

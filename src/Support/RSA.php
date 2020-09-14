@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Lmh\EasyOpen\Support;
 
 
-use Lmh\EasyOpen\Constant\RequestParamsConstant;
+use Lmh\EasyOpen\Constant\RequestParamst;
 
 class RSA
 {
@@ -66,12 +66,12 @@ class RSA
     private function getSignContent($params, $isVerify = false)
     {
         $bizParams = [];
-        if (isset($params[RequestParamsConstant::BIZ_CONTENT_FIELD])) {
-            $bizParams = $params[RequestParamsConstant::BIZ_CONTENT_FIELD];
-            unset($params[RequestParamsConstant::BIZ_CONTENT_FIELD]);
+        if (isset($params[RequestParamst::BIZ_CONTENT_FIELD])) {
+            $bizParams = $params[RequestParamst::BIZ_CONTENT_FIELD];
+            unset($params[RequestParamst::BIZ_CONTENT_FIELD]);
         }
         if ($bizParams) {
-            $params[RequestParamsConstant::BIZ_CONTENT_FIELD] = json_encode($bizParams, JSON_UNESCAPED_UNICODE);
+            $params[RequestParamst::BIZ_CONTENT_FIELD] = json_encode($bizParams, JSON_UNESCAPED_UNICODE);
         }
         unset($params['sign']);
         if ($isVerify) {

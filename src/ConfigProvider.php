@@ -17,6 +17,7 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
+        $migrationsPath = BASE_PATH . DIRECTORY_SEPARATOR . 'migrations';
         return [
             'dependencies' => [
             ],

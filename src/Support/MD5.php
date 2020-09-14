@@ -22,8 +22,8 @@ class MD5
     {
         unset($params['sign']);
         ksort($params);
-        $attributes['key'] = $key;
-        return strtoupper(call_user_func_array($encryptMethod, [urldecode(http_build_query($attributes))]));
+        $params['key'] = $key;
+        return strtoupper(call_user_func_array($encryptMethod, [urldecode(http_build_query($params))]));
     }
 
     /**
