@@ -6,7 +6,7 @@ easyopen的功能类似于[淘宝开放平台](http://open.taobao.com/docs/api.h
 
 
 ## 示例
-使用非常简单，定义自己的控制器和网关路由，注入OpenRequestDispatcher 即可
+- 1、定义自己的控制器和网关路由，注入OpenRequestDispatcher 即可
 ```
 <?php
 namespace App\Controller;
@@ -33,7 +33,8 @@ class GateWayController
     }
 }
 ```
-接口类如下，引入OpenService 和 OpenMapping即可
+
+- 2、定义开发服务类如下，引入OpenService 和 OpenMapping即可
 ```
 <?php
 namespace App\Service\Merchant;
@@ -56,11 +57,9 @@ class MerchantService
         return json_encode($params);
     }
 }
-
 ```
 
-
-- 请求数据：
+- 3、 请求数据：
 
 ```
 {
@@ -76,9 +75,9 @@ class MerchantService
     }
 }
 ```
- - 签名密钥获取
+## 签名密钥获取
  
- 定义数据获取类实现ApplicationDataFetchInterface接口，例如：
+- 1、定义数据获取类实现ApplicationDataFetchInterface接口，例如：
  ```
 <?php
 class ApplicationDataFetchFactory implements ApplicationDataFetchInterface{
@@ -122,10 +121,15 @@ class ApplicationDataFetchFactory implements ApplicationDataFetchInterface{
 }
 ```
 
-在 config/autoload/dependencies.php 内完成关系配置：
+- 2、在 config/autoload/dependencies.php 内完成关系配置：
  ```
 <?php
 return [
    \Lmh\EasyOpen\ApplicationDataFetchInterface::class => \App\Factory\ApplicationDataFetchFactory::class,
 ];
+ ```
+
+- 3、发布平台密钥配置文件
+ ```
+ php bin/hyperf.php vendor:publish lmh/easyopen
  ```
