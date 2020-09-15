@@ -34,6 +34,6 @@ class SignValidateTest extends AbstractTestCase
         $signHandler = new RSA();
         $sign = $signHandler->sign($params, $privateKey);
         $verify = $signHandler->verify($params, $sign, $publicKey);
-        $this->assertTrue(true);
+        $this->assertTrue($verify);
     }
 }
