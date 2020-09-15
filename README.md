@@ -9,7 +9,7 @@ easyopen的功能类似于[淘宝开放平台](http://open.taobao.com/docs/api.h
 使用非常简单，定义自己的控制器和网关路由，注入OpenRequestDispatcher 即可
 ```
 <?php
-namespace app\Controller;
+namespace App\Controller;
 
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
@@ -36,7 +36,7 @@ class GateWayController
 接口类如下，引入OpenService 和 OpenMapping即可
 ```
 <?php
-namespace app\Service\merchant;
+namespace App\Service\Merchant;
 
 
 use Lmh\EasyOpen\Annotation\OpenService;
@@ -47,7 +47,7 @@ use Lmh\EasyOpen\Annotation\OpenMapping;
 class MerchantService
 {
     /**
-     * @OpenMapping(path="merchant.create",methods={"GET","POST"})
+     * @OpenMapping(path="merchant.create")
      * @param array $params
      * @return string
      */
@@ -70,9 +70,62 @@ class MerchantService
     "nonce":"xsadasd823mxdjrewrew",
     "sign": "2FF9EE4B7908DF976FD11E405529DD67",
     "version": "1.0",
-    "content": {
+    "biz_content": {
         "merchant_name": "测试公司",
         "city": "杭州"
     }
 }
 ```
+ - 签名密钥获取
+ 
+ 定义数据获取类实现ApplicationDataFetchInterface接口，例如：
+ ```
+<?php
+class ApplicationDataFetchFactory implements ApplicationDataFetchInterface{
+     /**
+     * @var
+     */
+    private $data;
+
+    /**
+     * @param string $appId
+     * @return ApplicationDataFetchInterface
+     * @throws ApplicationDataFetchException
+     */
+    public function make(string $appId): ApplicationDataFetchInterface
+    {
+        //可以存入redis
+        $data = Application::query()->select(['appid', 'secret', 'public_key', 'status'])->where(['appid' => $appId])->first();
+        if (!$data) {
+            throw new ApplicationDataFetchException(ErrorSubCode::getMessage(ErrorSubCode::INVALID_APP_ID));
+        }
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSecret(?string $appId = null): string
+    {
+        return $this->data['secret'] ?? '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPublicKey(?string $appId = null): string
+    {
+        return $this->data['public_key'] ?? '';
+    }
+
+}
+```
+
+在 config/autoload/dependencies.php 内完成关系配置：
+ ```
+<?php
+return [
+   \Lmh\EasyOpen\ApplicationDataFetchInterface::class => \App\Factory\ApplicationDataFetchFactory::class,
+];
+ ```
