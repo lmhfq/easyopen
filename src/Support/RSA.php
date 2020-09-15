@@ -23,11 +23,15 @@ class RSA
      */
     public function sign($content, $privateKey)
     {
+        $sign = '';
         $content = $this->getSignContent($content);
         $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n" .
             wordwrap($privateKey, 64, "\n", true) .
             "\n-----END RSA PRIVATE KEY-----";
-        openssl_sign($content, $sign, $privateKey, OPENSSL_ALGO_SHA256);
+        try {
+            openssl_sign($content, $sign, $privateKey, OPENSSL_ALGO_SHA256);
+        } catch (\Exception $e) {
+        }
         return base64_encode($sign);
     }
 
@@ -48,7 +52,11 @@ class RSA
         $publicKey = "-----BEGIN PUBLIC KEY-----\n" .
             wordwrap($publicKey, 64, "\n", true) .
             "\n-----END PUBLIC KEY-----";
-        return openssl_verify($content, base64_decode($sign), $publicKey, OPENSSL_ALGO_SHA256) === 1;
+        try {
+            return openssl_verify($content, base64_decode($sign), $publicKey, OPENSSL_ALGO_SHA256) === 1;
+        } catch (\Exception $e) {
+        }
+        return false;
     }
 
     /**
